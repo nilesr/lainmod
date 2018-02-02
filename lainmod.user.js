@@ -38,7 +38,7 @@ var onload = function () {
 		board = board.substr(board.lastIndexOf("/") + 1); // like "q"
 		var id = href.substr(href.lastIndexOf("/") + 1).replace(".html", ""); // like "1"
 		var key = board.concat(":".concat(id)); // like "q:1", just used for local storage
-		var oldreplies = GM_getValue(key, 0);
+		var oldreplies = GM_getValue(key, -1);
 		if (oldreplies < replies) {
 			r.children[0].children[1].children[0].innerHTML = "<span style='color:red;'>+" + (replies - oldreplies) + "</span>";
 			// we have to wrap this in a closure because otherwise it clicking any post would only update the last post processed in this loop
@@ -52,6 +52,18 @@ var onload = function () {
 		} else {
 			r.children[0].children[1].children[0].innerHTML = "Read all " + replies + " replies";
 		}
+	}
+	var ops = Array.prototype.slice.call(document.getElementsByClassName("op")).filter(function(e) { return e.classList.contains("post"); });
+	var replies = Array.prototype.slice.call(document.getElementsByClassName("postcontainer"));
+	var posts = ops.concat(replies);
+	var req = Number(document.location.hash.slice(1));
+	if (!isNaN(req) && req != 0) {
+		var to_select = posts[posts.length - req];
+		to_select.scrollIntoView(true);
+		var hr = document.createElement("hr");
+		to_select.parentElement.insertBefore(hr, to_select);
+		hr.style.display = "block";
+		hr.style.borderTop = "1px solid red";
 	}
 };
 
