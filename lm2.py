@@ -8,10 +8,13 @@ if not db.TableExists("main"):
 	init = True
 	db.CreateTable("main")
 def get(board):
-	res = json.loads(urllib.request.urlopen("https://lainchan.org/" + board + "/catalog.json").read())[0]["threads"]
-	for r in res:
-		r["board"] = board
-		r["key"] = board + ":" + str(r["no"])
+	res = []
+	parsed = json.loads(urllib.request.urlopen("https://lainchan.org/" + board + "/catalog.json").read())
+	for page in parsed:
+		for r in page["threads"]:
+			r["board"] = board
+			r["key"] = board + ":" + str(r["no"])
+			res.append(r)
 	return res
 def replace(board):
 	if board == "tech": return "Ω"
