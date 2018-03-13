@@ -1,9 +1,11 @@
 // ==UserScript==
 // @name		lainmod
 // @namespace	https://niles.xyz
+// @include 	http://lainchan.org/*/res/*
+// @include 	https://lainchan.org/*/res/*
 // @include 	http://lainchan.org/*/catalog.html
 // @include 	https://lainchan.org/*/catalog.html
-// @version		1.0
+// @version		2.0
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @run-at		document-end
@@ -41,6 +43,7 @@ var onload = function () {
 		var oldreplies = GM_getValue(key, -1);
 		if (oldreplies < replies) {
 			r.children[0].children[1].children[0].innerHTML = "<span style='color:red;'>+" + (replies - oldreplies) + "</span>";
+			r.children[0].children[0].href += "#" + (replies - oldreplies);
 			// we have to wrap this in a closure because otherwise it clicking any post would only update the last post processed in this loop
 			(function(intkey, intreplies, intr) {
 				r.addEventListener("click", function() {
@@ -54,16 +57,17 @@ var onload = function () {
 		}
 	}
 	var ops = Array.prototype.slice.call(document.getElementsByClassName("op")).filter(function(e) { return e.classList.contains("post"); });
-	var replies = Array.prototype.slice.call(document.getElementsByClassName("postcontainer"));
-	var posts = ops.concat(replies);
+	var reply_containers = Array.prototype.slice.call(document.getElementsByClassName("postcontainer"));
+	var posts = ops.concat(reply_containers);
 	var req = Number(document.location.hash.slice(1));
-	if (!isNaN(req) && req != 0) {
+	if (!isNaN(req) && req !== 0) {
 		var to_select = posts[posts.length - req];
 		to_select.scrollIntoView(true);
 		var hr = document.createElement("hr");
 		to_select.parentElement.insertBefore(hr, to_select);
 		hr.style.display = "block";
 		hr.style.borderTop = "1px solid red";
+		GM_setValue(encodeURIComponent(board_name) + ":" + thread_id, posts.length - 1);
 	}
 };
 
