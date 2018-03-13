@@ -37,6 +37,9 @@ if init:
 	sys.exit(0)
 threads = [t for t in threads if t["new"] != 0]
 threads.sort(key = lambda t: t["new"])
+if len(threads) == 0:
+	print("No threads")
+	sys.exit(0)
 end = max([t["new"] for t in threads])
 for i in range(1, end + 1):
 	this_round = [t for t in threads if t["new"] == i]
